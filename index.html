@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var socket = io.connect('http://localhost:3000');
+		socket.on('message', function(data)
+			{
+				document.getElementById('msg').innerHTML = data;
+			});
+		socket.send('hi from client');
+		socket.on('user-joined', function(data)
+			{
+				document.getElementById('new').innerHTML += data.msg + "<br />";
+			});
+
+		socket.on('chat-msg', function(data)
+			{
+				document.getElementById('chat').innerHTML += "<font color='blue'>" + data.sender + ":</font> " + data.m + "<br />";
+			});
+
+		function sendmsg()
+		{
+			m = document.getElementById('str').value;
+			socket.emit('send-msg', {m:m, sender:'sender'});
+			document.getElementById('chat').innerHTML += "<font color='blue'>You:</font> " + m + "<br />";
+			document.getElementById('str').value = "";
+		}
+	</script>
+</head>
+<body>
+	<div id='msg'></div><br />
+	<div id='new'></div>
+	<p><div id='chat'>
+		<h2>Chat!!</h2>
+	</div></p>
+	<input type="text" id="str"> <button onclick="sendmsg()">Send</button>
+</body>
+</html>
